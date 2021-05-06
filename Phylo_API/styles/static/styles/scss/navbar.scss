@@ -1,0 +1,51 @@
+nav{
+    width: 100%;
+    background: blue;
+    ul{
+        width: 80%;
+        margin: 0 auto;
+        padding: 0;
+        li{
+            list-style: none;
+            display: inline-block;
+            padding: 20px;
+            &:hover{
+                background: orange;
+            }     
+        }
+        a{
+            color: white;
+            text-decoration: none;
+        }
+    }
+    .toggle{
+        width: 100%;
+        padding: 10px 20px;
+        background: red;
+        text-align: right;
+        box-sizing: border-box;
+        color: white;
+        font-size: 30px;
+        display: none;
+    }
+}
+@media (max-width:800px){
+    nav{
+        .toggle{
+            display: block !important;
+        }
+        .active{
+            display: block;
+        }
+        ul{
+            width: 100%;
+            display: none;
+            a{
+                display: block;
+                text-align: center;
+            }
+        }
+    }
+}
+ 
+
