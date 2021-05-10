@@ -1,13 +1,5 @@
 from django.db import models
 
-
-class species(models.Model):
-    specie_id = models.AutoField(primary_key=True)
-    scientific_name = models.CharField(max_length=100)
-    colloquial_name = models.CharField(max_length=20)
-    taxon_id = models.CharField(max_length=25)
-    image_specie = models.CharField(max_length=100)
-
 class users(models.Model):
     user_id = models.AutoField(primary_key=True)
     email = models.CharField(max_length=50)
@@ -16,6 +8,14 @@ class users(models.Model):
     surname = models.CharField(max_length=20)
     role = models.CharField(max_length=20)
 
+class species(models.Model):
+    specie_id = models.AutoField(primary_key=True)
+    scientific_name = models.CharField(max_length=100)
+    colloquial_name = models.CharField(max_length=20)
+    taxon_id = models.CharField(max_length=25)
+    image_specie = models.CharField(max_length=100, null=True)
+    user = models.ForeignKey(users, on_delete=models.CASCADE, null=True)
+    
 class trees(models.Model):
     tree_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(users, on_delete=models.CASCADE)
@@ -33,8 +33,8 @@ class markers(models.Model):
     hour = models.TimeField()
     country = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
-    identification_id = models.IntegerField()
-    dataset_key = models.CharField(max_length=150)
+    identification_id = models.BigIntegerField(null=True)
+    dataset_key = models.CharField(max_length=150, null=True)
 
 class map_images(models.Model):
     tree = models.ForeignKey(trees, on_delete=models.CASCADE)
@@ -47,12 +47,10 @@ class download_occurrences_date(models.Model):
 
 class sequences(models.Model):
     acc_number = models.CharField(max_length=20,primary_key=True)
+    specie = models.ForeignKey(species, on_delete=models.CASCADE)
     gene = models.CharField(max_length=20)
     sequence = models.CharField(max_length=10000)
 
-class specie_sequences(models.Model):
-    specie = models.ForeignKey(species, on_delete=models.CASCADE)
-    acc_number = models.ForeignKey(sequences, on_delete=models.CASCADE)
 
 class used_species(models.Model):
     tree = models.ForeignKey(trees, on_delete=models.CASCADE)
