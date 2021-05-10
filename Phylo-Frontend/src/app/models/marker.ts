@@ -1,5 +1,5 @@
 /**
- * @file Model class to create the a marker object
+ * @file Model class to create marker objects
  * @author Gerard Garcia
  * @version 1.0
  * @date 10/05/2021

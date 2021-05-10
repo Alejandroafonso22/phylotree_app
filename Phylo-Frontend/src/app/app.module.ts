@@ -5,14 +5,14 @@ import { AppComponent } from './app.component';
 
 // General imports
 import { HomeComponent } from './layout/home/home.component';
+import { FooterComponent } from './layout/footer/footer.component';
+import { NavbarComponent } from './layout/navbar/navbar.component';
+import { HeaderComponent } from './layout/header/header.component';
+import { NotFoundComponent } from './meta/not-found/not-found.component';
 
 // GOF app imports
 import { GofHolderComponent } from './gof-holder/gof-holder.component';
 import { MapViewComponent } from './gof-holder/map-view/map-view.component';
-import { FooterComponent } from './layout/footer/footer.component';
-import { NavbarComponent } from './layout/navbar/navbar.component';
-import { HeaderComponent } from './layout/header/header.component';
-import { ContentComponent } from './layout/content/content.component';
 
 
 @NgModule({
@@ -23,7 +23,7 @@ import { ContentComponent } from './layout/content/content.component';
     FooterComponent,
     NavbarComponent,
     HeaderComponent,
-    ContentComponent,
+    NotFoundComponent,
   ],
   imports: [
     BrowserModule,
