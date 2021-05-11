@@ -1,4 +1,13 @@
 <app-header></app-header>
-<app-navbar></app-navbar>
+<app-navbar>
+    <nav class=" navbar navbar-dark bg-primary">
+        <a routerLink="/home" routerLinkActive="active" class="btn btn-group-sm">Home</a> --
+        <a routerLink="/Trees" routerLinkActive="active" class="btn btn-group-sm">Friends</a> --
+        <a routerLink="/login" routerLinkActive="active" class="btn btn-group-sm">Login</a> --
+        <a routerLink="/logout" routerLinkActive="active" class="btn btn-group-sm">Logout</a>
+    </nav>
+</app-navbar>
 <router-outlet></router-outlet>
-<app-footer></app-footer>
+<app-footer>
+    <p class="text-info">Biology Project, EVA01</p>
+</app-footer>

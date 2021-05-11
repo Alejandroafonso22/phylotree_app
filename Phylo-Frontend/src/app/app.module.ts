@@ -14,6 +14,12 @@ import { NotFoundComponent } from './meta/not-found/not-found.component';
 import { GofHolderComponent } from './gof-holder/gof-holder.component';
 import { MapViewComponent } from './gof-holder/map-view/map-view.component';
 
+//PhyloGenetic-Trees imports 
+import { PhylogeneticTreesComponent } from './phylogenetic-trees/phylogenetic-trees.component';
+
+
+
+
 
 @NgModule({
   declarations: [
@@ -24,6 +30,7 @@ import { MapViewComponent } from './gof-holder/map-view/map-view.component';
     NavbarComponent,
     HeaderComponent,
     NotFoundComponent,
+    PhylogeneticTreesComponent,
   ],
   imports: [
     BrowserModule,
