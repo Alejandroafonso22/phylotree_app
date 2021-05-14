@@ -1,10 +1,9 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-class users(models.Model):
+class users(User):
     user_id = models.AutoField(primary_key=True)
-    email = models.CharField(max_length=50)
     name = models.CharField(max_length=20)
-    password = models.CharField(max_length=1000)
     surname = models.CharField(max_length=20)
     role = models.CharField(max_length=20)
 
@@ -22,6 +21,7 @@ class trees(models.Model):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=20)
     tree_route = models.CharField(max_length=100)
+    image_route = models.CharField(max_length=100, null=True)
 
 class markers(models.Model):
     marker_id = models.AutoField(primary_key=True)
@@ -35,11 +35,7 @@ class markers(models.Model):
     state = models.CharField(max_length=100)
     identification_id = models.BigIntegerField(null=True)
     dataset_key = models.CharField(max_length=150, null=True)
-
-class map_images(models.Model):
-    tree = models.ForeignKey(trees, on_delete=models.CASCADE)
-    image_route = models.CharField(max_length=100)
-
+    
 class download_occurrences_date(models.Model):
     specie = models.ForeignKey(species, on_delete=models.CASCADE)
     download_id = models.CharField(max_length=23, unique=True)
@@ -52,6 +48,3 @@ class sequences(models.Model):
     sequence = models.CharField(max_length=10000)
 
 
-class used_species(models.Model):
-    tree = models.ForeignKey(trees, on_delete=models.CASCADE)
-    specie = models.ForeignKey(species, on_delete=models.CASCADE)

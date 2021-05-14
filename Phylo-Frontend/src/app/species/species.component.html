@@ -1,0 +1,25 @@
+<div class="container">
+    <table class="table table-bordered table-striped">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Scientific Name</th>
+        <th>Colloquial Name</th>
+        <th>Taxon ID</th>
+        <th>Image Specie</th>
+        <th>User</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let specie of species">
+        <td><span>{{specie.specie_id}}</span></td>
+        <td><span>{{specie.scientific_name}}</span></td>
+        <td><span>{{specie.colloquial_name}}</span></td>
+        <td><span>{{specie.taxon_id}}</span></td>
+        <td><span>{{specie.image_specie}}</span></td>
+        <td><span>{{specie.user}}</span></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  

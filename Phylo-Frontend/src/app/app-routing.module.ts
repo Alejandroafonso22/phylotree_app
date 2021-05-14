@@ -7,12 +7,14 @@ import { NotFoundComponent } from './meta/not-found/not-found.component';
 
 // GOF app imports
 import { GofHolderComponent } from './gof-holder/gof-holder.component';
+import { SpeciesComponent } from './species/species.component';
 
 const routes: Routes = [
   {path: 'home', component: HomeComponent},
   {path: 'loadGof', component: GofHolderComponent},
   {path: '**', component: NotFoundComponent},
-  {path: '', redirectTo: 'home', pathMatch: 'full'}
+  {path: '', redirectTo: 'home', pathMatch: 'full'},
+  {path: 'species', component: SpeciesComponent},
 ];
 
 @NgModule({
