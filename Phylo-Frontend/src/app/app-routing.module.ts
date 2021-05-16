@@ -5,20 +5,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './layout/home/home.component';
 import { NotFoundComponent } from './meta/not-found/not-found.component';
 
-// GOF app imports
-import { GofHolderComponent } from './gof-holder/gof-holder.component';
-import { SpeciesComponent } from './species/species.component';
-import { SpeciesdbComponent } from './speciesdb/speciesdb.component';
+// GOG app imports
+import { GogHolderComponent } from './gog-holder/gog-holder.component';
 
 const routes: Routes = [
-  {path: 'speciesdb', component: SpeciesdbComponent},
   {path: 'home', component: HomeComponent},
-  {path: 'species', component: SpeciesComponent},
-  {path: 'loadGof', component: GofHolderComponent},
+  {path: 'loadGog', component: GogHolderComponent},
   {path: '**', component: NotFoundComponent},
-  {path: '', redirectTo: 'home', pathMatch: 'full'},
-
-
+  {path: '', redirectTo: 'home', pathMatch: 'full'}
 ];
 
 @NgModule({

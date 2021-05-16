@@ -5,7 +5,6 @@ from django.shortcuts import render
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser
 from rest_framework import status
-from rest_framework.response import Response
 from species_app.models import species, users, trees, markers, download_occurrences_date, sequences, markers_with_names
 from species_app.serializers import species_serializer, users_serializer, trees_serializer, markers_serializer, download_ocurrences_date_serializer, sequences_serializer, markers_with_names_serializer
 from rest_framework.decorators import api_view, permission_classes
@@ -20,6 +19,10 @@ import subprocess
 from bs4 import BeautifulSoup
 import base64
 import json
+
+# Modules
+from gbif_api_consumer.gbif_consumer import *
+
 """
 API VIEW WITH FUNCTIONS
 @Alejandro Afonso Lopez
@@ -37,12 +40,12 @@ def login_token(request):
     try:
         user = User.objects.get(username=username)
     except User.DoesNotExist:
-        return Response("User not valid")
+        return JsonResponse("User not valid")
     pwd_validate = make_password(password,salt=None, hasher='default')
     if not pwd_validate:
-        return Response("password not valid")
+        return JsonResponse("password not valid")
     token, created = Token.objects.get_or_create(user=user)
-    return Response(token.key)
+    return JsonResponse(token.key)
     
 """
 API for the users and have two functions:
@@ -52,7 +55,6 @@ API for the users and have two functions:
 @version 1.0
 """
 @api_view(['GET', 'POST', 'DELETE'])
-@permission_classes([IsAuthenticated])
 def species_api_list(request):
     if request.method == 'GET':
         all_species = species.objects.all() 
@@ -60,7 +62,7 @@ def species_api_list(request):
         if specie_id is not None:
             all_species = all_species.filter(specie_id__icontains=specie_id)
         specie_serialize = species_serializer(all_species, many=True)
-        return Response(specie_serialize.data)
+        return JsonResponse(specie_serialize.data)
     elif request.method == 'POST':
         specie_data = JSONParser().parse(request)
         specie_serializer = species_serializer(data=specie_data)
@@ -74,7 +76,6 @@ def species_api_list(request):
         return JsonResponse({'message': '{} Specie were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes([IsAuthenticated])
 def species_api_details(request, pk):
     try:
         species_id = species.objects.get(pk=pk) 
@@ -82,7 +83,7 @@ def species_api_details(request, pk):
         return JsonResponse({'message': 'The specie does not exist'}, status=status.HTTP_404_NOT_FOUND)    
     if request.method == 'GET': 
         species_serialize = species_serializer(species_id) 
-        return Response(species_serialize.data) 
+        return JsonResponse(species_serialize.data) 
     elif request.method == 'PUT': 
         species_data = JSONParser().parse(request) 
         species_serialize = species_serializer(species, data=species_data) 
@@ -107,8 +108,7 @@ API for the users and have two functions:
 @user_api_list -> to show method get all users -> Delete all users or post one user
 @user_api_detaisl -> to get one user with ID and can PUT, GET and DELETE.
 """
-@api_view(['GET','DELETE'])
-@permission_classes([IsAuthenticated]) 
+@api_view(['GET','DELETE']) 
 def user_api_list(request):
     if request.method == 'GET':
         all_users = users.objects.all()
@@ -116,7 +116,7 @@ def user_api_list(request):
         if user_id is not None:
             all_users = all_users.filter(user_id__icontains=user_id)
         user_serialize = users_serializer(all_users, many=True)
-        return Response(user_serialize.data)
+        return JsonResponse(user_serialize.data)
     elif request.method == 'DELETE':
         count = users.objects.all().delete()
         return JsonResponse({'message': '{} Users were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
@@ -142,7 +142,6 @@ Required authtoken to show this function.
 version 1.0
 """
 @api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes([IsAuthenticated])
 def user_api_details(request, pk):
     try:
         user_id = users.objects.get(pk=pk) 
@@ -150,7 +149,7 @@ def user_api_details(request, pk):
         return JsonResponse({'message': 'The user does not exist'}, status=status.HTTP_404_NOT_FOUND)    
     if request.method == 'GET': 
         user_serialize = users_serializer(user_id) 
-        return Response(user_serialize.data) 
+        return JsonResponse(user_serialize.data) 
     elif request.method == 'PUT': 
         user_data = JSONParser().parse(request) 
         user_serialize = users_serializer(users, data=user_data) 
@@ -167,8 +166,7 @@ API for the markers and have two functions:
 @markers_api_list -> to show method get all markers -> Delete all users or post one user
 @marker_api_detaisl -> to get one marker with ID and can PUT, GET and DELETE.
 """
-@api_view(['GET', 'POST', 'DELETE'])
-@permission_classes([IsAuthenticated])        
+@api_view(['GET', 'POST', 'DELETE'])      
 def markers_api_list(request):
     if request.method == 'GET':
        
@@ -192,7 +190,6 @@ Required authtoken to show this function.
 @version 1.0
 """
 @api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes([IsAuthenticated])
 def marker_api_details(request, pk):
     try:
         marker_id = markers.objects.get(pk=pk) 
@@ -200,7 +197,7 @@ def marker_api_details(request, pk):
         return JsonResponse({'message': 'The marker does not exist'}, status=status.HTTP_404_NOT_FOUND)    
     if request.method == 'GET': 
         marker_serialize = markers_serializer(marker_id) 
-        return Response(marker_serialize.data) 
+        return JsonResponse(marker_serialize.data) 
     elif request.method == 'PUT': 
         marker_data = JSONParser().parse(request) 
         marker_serialize = markers_serializer(markers, data=marker_data) 
@@ -230,8 +227,7 @@ Required authtoken to show this function
 @author Alejandro Afonso Lopez
 @version 1.0
 """
-@api_view(['GET', 'POST', 'DELETE'])  
-@permission_classes([IsAuthenticated])      
+@api_view(['GET', 'POST', 'DELETE'])       
 def trees_api_list(request):
     if request.method == 'GET':
         all_trees = trees.objects.all()
@@ -259,7 +255,6 @@ Required authtoken to show this function
 @version 1.0
 """
 @api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes([IsAuthenticated])
 def tree_api_details(request, pk):
     try:
         tree_id = trees.objects.get(pk=pk) 
@@ -267,7 +262,7 @@ def tree_api_details(request, pk):
         return JsonResponse({'message': 'The tree does not exist'}, status=status.HTTP_404_NOT_FOUND)    
     if request.method == 'GET': 
         trees_serialize = trees_serializer(tree_id) 
-        return Response(trees_serialize.data) 
+        return JsonResponse(trees_serialize.data) 
     elif request.method == 'PUT': 
         tree_data = JSONParser().parse(request) 
         trees_serialize = trees_serializer(trees, data=tree_data) 
@@ -287,7 +282,6 @@ Required authtoken to use request in this api.
 @version 1.0
 """
 @api_view(['GET', 'POST', 'DELETE'])
-@permission_classes([IsAuthenticated])
 def sequences_api_list(request):  
     if request.method == 'GET':
         all_seq = sequences.objects.all() 
@@ -315,7 +309,6 @@ Required authtoken to show this sequence details.
 @author Alejandro Afonso Lopez 
 """
 @api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes([IsAuthenticated])
 def sequence_api_details(request, pk):
     try:
         sequence_id = sequences.objects.get(pk=pk) 
@@ -323,7 +316,7 @@ def sequence_api_details(request, pk):
         return JsonResponse({'message': 'The sequence does not exist'}, status=status.HTTP_404_NOT_FOUND)    
     if request.method == 'GET': 
         sequence_serialize = sequences_serializer(sequence_id) 
-        return Response(sequence_serialize.data) 
+        return JsonResponse(sequence_serialize.data) 
     elif request.method == 'PUT': 
         sequence_data = JSONParser().parse(request) 
         sequence_serialize = sequences_serializer(sequences, data=sequence_data) 
@@ -343,7 +336,6 @@ Required authtoken to show this occurrences date details.
 @author Alejandro Afonso Lopez
 """
 @api_view(['GET','POST'])
-@permission_classes([IsAuthenticated])
 def occurrences_post_add(request):
     if request.method == 'GET':
         all_seq = download_occurrences_date.objects.all() 
@@ -351,7 +343,7 @@ def occurrences_post_add(request):
         if id_number is not None:
             all_seq = all_seq.filter(id_number__icontains=id_number)
         download_serializer = download_ocurrences_date_serializer(all_seq, many=True)
-        return Response(download_serializer.data)    
+        return JsonResponse(download_serializer.data)    
 
 """
 Function to get the download occurrences data with filter by specie_id. In this case in this function filtered by specie to show concrete specie with
@@ -360,7 +352,6 @@ Required authtoken to request with method get in this function.
 @author Alejandro Afonso Lopez
 """
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def occurrences_getdetails(request, specie_id):
     try:
         download_fk = download_occurrences_date.objects.all().filter(specie_id = specie_id)
@@ -368,7 +359,7 @@ def occurrences_getdetails(request, specie_id):
         return JsonResponse({'message': 'The occurrences does not exist'}, status=status.HTTP_404_NOT_FOUND)    
     if request.method == 'GET': 
         download_serialize = download_ocurrences_date_serializer(download_fk, many=True) 
-        return Response(download_serialize.data)
+        return JsonResponse(download_serialize.data)
 
 @api_view(['GET'])
 def image_upload(request):
@@ -387,3 +378,26 @@ def image_upload(request):
     return JsonResponse(json.dumps({"image": image_data}), safe=False)
 
 
+@api_view(['GET'])
+def bridge(request):
+    print("===================== VISTA ==========================")
+
+    parse = parse_occurrence_data("1.csv")
+    finaldf = tidy_and_dict(parse, 12, None, [])
+
+    ocurrences_parsed = markers_serializer(data = finaldf, many = True)
+
+    if ocurrences_parsed.is_valid():
+        ocurrences_parsed.save()
+    #name = str(1234567890 + random.randint(3, 9))
+    #occurrence_thread = threading.Thread(target=gbif_consumer_master, args=("Lycopodiophyta", 4, None, ))
+    #occurrence_thread.name = name
+    #occurrence_thread.start()
+    #print("========================")
+    #for thread in threading.enumerate():
+    #    print(thread.name)
+    #print("========================")
+    
+    #print(gbif_consumer_master("Lycopodiophyta"))
+    
+    return JsonResponse({"test": "runned"})

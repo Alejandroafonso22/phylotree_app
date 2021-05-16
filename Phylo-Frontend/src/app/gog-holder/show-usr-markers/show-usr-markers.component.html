@@ -1,0 +1,94 @@
+<div *ngFor="let specie of species">
+  <p class="alert alert-warning" role="alert" *ngIf="!specie.finished">Retriveving markers of {{specie.scientific_name}}, please wait...</p>
+  <div class="alert alert-info alert-dismissible fade show" role="alert" *ngIf="specie.empty">
+    <p class="no-padding">No markers found for the {{specie.scientific_name}}</p>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  <p class="alert alert-danger" role="alert" *ngIf="specie.errors">Error querying markers of {{specie.scientific_name}}<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></p>
+</div>
+<input name="spoilerbtn" name="spoilerbtn" class="spoilerbutton btn btn-outline-primary" type="button" value="Spoiler filters"  
+onclick="this.value=this.value=='Spoiler filters'?'Hide filters':'Spoiler filters';">
+<div class="spoiler"><div>
+    <section>
+      <form #markersFilterFrom="" novalidate>
+          <table class="table table-striped">
+            <tbody>
+              <tr>
+                <td><h5>Filter by country code</h5></td>
+                <td><input type="text" name="nameF" [(ngModel)]="countryCodeFilter" (ngModelChange)="filterMarkers()"></td>
+              </tr>
+              <tr>
+                <td><h5>Filter by date after</h5></td>
+                <td><input type="date" name="dateF" [(ngModel)]="dateAfterFilter" (ngModelChange)="filterMarkers()"></td>
+              </tr>
+              <tr>
+                <td><h5>Filter by date before</h5></td>
+                <td><input type="date" name="dateF" [(ngModel)]="dateBeforeFilter" (ngModelChange)="filterMarkers()"></td>
+              </tr>
+              <tr>
+                <td><h5>Select by specie scientific name</h5></td>
+                <td>
+                  <input list="sciNames" name="sciName" id="sciName" [(ngModel)]="sciNameFilter">
+                  <datalist id="sciNames" (ngModelChange)="filterMarkers()">
+                      <option value="{{specie.scientific_name}}" *ngFor="let specie of species">
+                  </datalist>
+                </td>
+              </tr>
+              <tr>
+                <td><h5>Select by specie colloquial name</h5></td>
+                <td>
+                  <input list="collNames" name="colName" id="colName" [(ngModel)]="collNameFilter">
+                  <datalist id="collNames" (ngModelChange)="filterMarkers()">
+                      <option value="{{specie.colloquial_name}}" *ngFor="let specie of species">
+                  </datalist>
+                </td>
+              </tr>
+              <tr>
+                <td><h5>Items per page</h5></td>
+                <td><input type="number" name="itemsPerPage" [(ngModel)]="itemsPerPage"></td>
+              </tr>
+              <tr>
+                <td><h5>Number of markers listed</h5></td>
+                <td><b>{{markersNumber}}</b></td>
+              </tr>
+            </tbody>
+          </table>
+      </form>
+    </section>
+  </div>
+</div>
+<section class="responsive-table">
+  <table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Identification ID</th>
+            <th>Longitude</th>
+            <th>Latitude</th>
+            <th>Date</th>
+            <th>Hour</th>
+            <th>Country code</th>
+            <th>State</th>
+            <th>Scientific name</th>
+            <th>Colloquial name</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let marker of filteredMarkersList | paginate: {itemsPerPage: itemsPerPage, currentPage: currentPage}">
+            <td>{{marker.identification_id}}</td>
+            <td>{{marker.longitude}}</td>
+            <td>{{marker.latitude}}</td>
+            <td>{{marker.date}}</td>
+            <td>{{marker.hour}}</td>
+            <td>{{marker.country}}</td>
+            <td>{{marker.state}}</td>
+            <td>{{marker.scientific_name}}</td>
+            <td>{{marker.colloquial_name}}</td>
+            <td><button type="submit" class="btn btn-outline-primary"><i class="far fa-edit"></i> Edit</button></td>
+            <td><button type="submit" class="btn btn-outline-danger"><i class="far fa-trash-alt"></i> Delete</button></td>
+        </tr>
+    </tbody>
+  </table>
+</section>
+<pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
