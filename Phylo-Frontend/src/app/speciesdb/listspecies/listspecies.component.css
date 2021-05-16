@@ -1,0 +1,46 @@
+tr{
+    display: flex;
+    justify-content: space-evenly;
+}
+table{
+    width: 100%;
+}
+.align-center{
+    display: flex;
+    justify-content: center;
+}
+
+
+.info {
+    display: flex;
+    margin-top: 10rem;
+    justify-content: space-around;
+  }
+  .info div {
+    width: 60rem;
+    height: 60rem;
+    box-shadow: 0px 0px 10px black;
+    margin: 0 2%;
+
+  }
+  .info div h1 {
+    text-align: center;
+  }
+  .info div:hover {
+    transform: scale(1.2);
+  }
+  .info div hr {
+    width: 80%;
+  }
+  .info div p {
+    margin: 1rem;
+  }
+  .info div .image-filter {
+    display: flex;
+    justify-content: center;
+    
+  }
+  .info div .image-filter img{
+      width: 30rem;
+      margin-top: 5rem;
+  }

@@ -2,10 +2,10 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import {NgxPaginationModule} from 'ngx-pagination'; 
 
-import {HttpClientModule} from '@angular/common/http'
- 
 // General imports
 import { HomeComponent } from './layout/home/home.component';
 import { FooterComponent } from './layout/footer/footer.component';
@@ -17,7 +17,10 @@ import { NotFoundComponent } from './meta/not-found/not-found.component';
 import { GofHolderComponent } from './gof-holder/gof-holder.component';
 import { MapViewComponent } from './gof-holder/map-view/map-view.component';
 import { SpeciesComponent } from './species/species.component';
-
+import { SpeciesdbComponent } from './speciesdb/speciesdb.component';
+import { ListspeciesComponent } from './speciesdb/listspecies/listspecies.component';
+import { DatabaseService } from './services/database/database.service';
+import { FilterspeciePipe } from './pipes/filterspecie.pipe';
 
 @NgModule({
   declarations: [
@@ -29,14 +32,18 @@ import { SpeciesComponent } from './species/species.component';
     HeaderComponent,
     NotFoundComponent,
     SpeciesComponent,
+    SpeciesdbComponent,
+    ListspeciesComponent,
+    FilterspeciePipe,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    NgxPaginationModule
   ],
-  providers: [],
+  providers: [DatabaseService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

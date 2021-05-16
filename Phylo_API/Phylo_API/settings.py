@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'species_app',
     'rest_framework',
     'rest_framework.authtoken',
-    'styles'
+    'styles',
+    'json_species_table'
 ]
 CORS_ORIGIN_ALLOW_ALL = True
 

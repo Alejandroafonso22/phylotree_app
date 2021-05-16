@@ -1,0 +1,11 @@
+--2021-05-16 16:04:19--  https://a-z-animals.com/media/horse-1.jpg
+Resolving a-z-animals.com (a-z-animals.com)... 172.67.15.55, 104.22.70.79, 104.22.71.79, ...
+Connecting to a-z-animals.com (a-z-animals.com)|172.67.15.55|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 105190 (103K) [image/jpeg]
+Saving to: ‘horse-1.jpg’
+
+horse-1.jpg                                       0%[                                                                                                      ]       0  --.-KB/s               horse-1.jpg                                     100%[=====================================================================================================>] 102.72K  --.-KB/s    in 0.04s   
+
+2021-05-16 16:04:20 (2.49 MB/s) - ‘horse-1.jpg’ saved [105190/105190]
+
