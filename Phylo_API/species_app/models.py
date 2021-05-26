@@ -11,7 +11,7 @@ class species(models.Model):
     specie_id = models.AutoField(primary_key=True)
     scientific_name = models.CharField(max_length=100)
     colloquial_name = models.CharField(max_length=20)
-    taxon_id = models.CharField(max_length=25)
+    taxon_id = models.CharField(max_length=25, unique=True)
     user = models.ForeignKey(users, on_delete=models.CASCADE, null=True)
     
 class trees(models.Model):
@@ -24,8 +24,8 @@ class trees(models.Model):
 
 class markers(models.Model):
     marker_id = models.AutoField(primary_key=True)
-    specie = models.ForeignKey(species, on_delete=models.CASCADE)
-    user = models.ForeignKey(users, on_delete=models.CASCADE, null=True)
+    specie_id = models.ForeignKey(species, on_delete=models.CASCADE, db_column="specie_id")
+    user_id = models.ForeignKey(users, on_delete=models.CASCADE, null=True, db_column="user_id")
     longitude = models.FloatField()
     latitude = models.FloatField()
     date = models.DateField()

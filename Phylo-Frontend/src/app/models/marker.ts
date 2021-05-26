@@ -25,8 +25,8 @@ export class Marker {
      * @memberof Marker
      */
     constructor(public marker_id: number,
-        public specie: number,
-        public user: number,
+        public specie_id: number,
+        public user_id: number,
         public longitude: number,
         public latitude: number,
         public date: Date,

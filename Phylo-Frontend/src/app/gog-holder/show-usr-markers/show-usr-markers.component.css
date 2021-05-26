@@ -66,3 +66,18 @@ button.close {
   .no-padding {
     margin: 0;
   }
+
+  /* || Table styles */
+tbody tr:hover {
+    background-color: rgba(205, 205, 195, 0.5);
+}
+
+/*table {
+    background: linear-gradient(90deg, rgba(55,55,159,1) 0%, rgba(63,81,181,1) 100%);
+    border-radius: 1rem;
+}
+
+tr, td {
+    color: #fff;
+    border: 1px solid white;
+}*/

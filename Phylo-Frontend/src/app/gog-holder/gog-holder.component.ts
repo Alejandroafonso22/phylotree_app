@@ -1,6 +1,19 @@
+/**
+ * @file Component that holds all the logic for the displaying and managing all the GOG components
+ * @author Gerard Garcia
+ * @version 1.0
+ * @date 21/05/2021
+*/
 import { Component, OnInit } from '@angular/core';
-import { ShowUsrMarkersComponent } from './show-usr-markers/show-usr-markers.component';
+import { HttpHeaders } from '@angular/common/http';
+import { Subscription } from 'rxjs';
+import { ChangeDetectorRef } from '@angular/core';
+
+// Services
 import { MarkersService } from '../services/gog/markers/markers.service';
+import { GogSharedService } from '../services/gog/gog-shared/gog-shared.service';
+
+// Models
 import { Marker } from '../models/marker';
 
 @Component({
@@ -24,17 +37,77 @@ export class GogHolderComponent implements OnInit {
   defaultSpeciesReady: boolean = false;
   species: Array<any> = [];
 
+  // Session status
+  sessionStatus: boolean = false;
+
   // User id
-  userId: number = 1;
-  targetSpecieId: number = 13;
+  userId: number;
+  targetSpecieId: number = 1;
 
-  constructor(private service: MarkersService) { }
+  // Session
+  session: any = null;
 
+  // Event holder that triggers when a marker CRUD operation is done
+  notifications: Subscription;
+
+  constructor(private markersService: MarkersService, private gogSharedService: GogSharedService, private cdr: ChangeDetectorRef) {
+    this.notifications = this.gogSharedService.getCreateUpdateEvent().subscribe(data => {
+      switch (data[0]) {
+        case "error":
+          this.sessionStatus = false;
+          this.markerQueryError = true;
+          cdr.detectChanges();
+          break;
+        case 'crud':
+          this.initUpdateListWorker(data);
+          break;
+      }
+    });
+   }
+
+  /**
+  * ngOnInit interface method
+  * @author Gerard Garcia
+  * @version 1.0
+  * @date 21/05/2021
+  * @memberof GogHolderComponent
+  */
   ngOnInit(): void {
-    this.cGetTargetSpecie(this.targetSpecieId);
-    this.cGetDefaultSpecies();
+    this.hardcodeSession();
+    this.verifyUserSession();
+    if(localStorage.getItem("loged_user") != null) {
+      this.session = JSON.parse(localStorage.getItem("loged_user"));
+      this.userId = this.session.user_id;
+      this.cGetTargetSpecie(this.targetSpecieId);
+      this.cGetDefaultSpecies();
+    } else {
+      this.markerQueryError = true;
+    }
   }
 
+  /**
+  * Verifies if the session user_id and token key are ok
+  * @author Gerard Garcia
+  * @version 1.0
+  * @date 21/05/2021
+  * @memberof GogHolderComponent
+  */
+  verifyUserSession() {
+    if(localStorage.getItem("loged_user") != null) {
+      let session = JSON.parse(localStorage.getItem("loged_user"));
+      if(!isNaN(session.user_id) && session.key) {
+        this.sessionStatus = true;
+      }
+    }
+  }
+
+  /**
+  * Prepares the species objects with status flags and then perfoms the markers queries
+  * @author Gerard Garcia
+  * @version 1.0
+  * @date 21/05/2021
+  * @memberof GogHolderComponent
+  */
   cPrepareQueryMarkers() {
     if(this.targetSpecieReady && this.defaultSpeciesReady) {
       for (let index = 0; index < this.species.length; index++) {
@@ -49,8 +122,19 @@ export class GogHolderComponent implements OnInit {
     }
   }
 
+  /**
+  * Get the target specie
+  * @author Gerard Garcia
+  * @version 1.0
+  * @date 21/05/2021
+  * @param {number} specie_id
+  * @memberof GogHolderComponent
+  */
   cGetTargetSpecie(specie_id) {
-    this.service.getTargetSpecie(specie_id).subscribe(data => {
+    let authHeader: HttpHeaders = this.markersService.authHeader;
+    authHeader = authHeader.set("Authorization", "Token " + this.session.key);
+
+    this.markersService.getTargetSpecie(specie_id, authHeader).subscribe(data => {
       this.species = this.species.concat(data);
       this.targetSpecieReady = true;
       this.cPrepareQueryMarkers();
@@ -60,8 +144,15 @@ export class GogHolderComponent implements OnInit {
     })
   }
 
+  /**
+  * Get the default species
+  * @author Gerard Garcia
+  * @version 1.0
+  * @date 21/05/2021
+  * @memberof GogHolderComponent
+  */
   cGetDefaultSpecies() {
-    this.service.getDefaultSpecies().subscribe(data => {
+    this.markersService.getDefaultSpecies().subscribe(data => {
       this.species = this.species.concat(data);
       this.defaultSpeciesReady = true;
       this.cPrepareQueryMarkers();
@@ -71,8 +162,21 @@ export class GogHolderComponent implements OnInit {
     })
   }
 
+  /**
+  * Get markers of a specificu specie and user
+  * @author Gerard Garcia
+  * @version 1.0
+  * @date 21/05/2021
+  * @param {number} specie_id
+  * @param {number} user_id
+  * @param {number} localArrayIndex
+  * @memberof GogHolderComponent
+  */
   cGetMarkersList(specie_id: number, user_id: number, localArrayIndex: number) {
-    this.service.getMarkersList(specie_id, user_id).subscribe( data => {
+    let authHeader: HttpHeaders = this.markersService.authHeader;
+    authHeader = authHeader.set("Authorization", "Token " + this.session.key);
+
+    this.markersService.getMarkersList(specie_id, user_id, authHeader).subscribe(data => {
       this.markersList = this.markersList.concat(data);
       if(data.length != 0) {
         this.species[localArrayIndex].empty = false;
@@ -90,5 +194,80 @@ export class GogHolderComponent implements OnInit {
     () => {
       this.markerQueryStatus = true;
     })
+  }
+
+  /**
+  * Verify if the client browser supports WebWorkers. If it does, updates the marker list in the WebWorker, if not, updates it in the main thread as fallback
+  * @author Gerard Garcia
+  * @version 1.0
+  * @date 21/05/2021
+  * @param {sting[]} params
+  * @memberof MapViewComponent
+  */
+  initUpdateListWorker(params: string[]) {
+    if(typeof Worker !== "undefined") {
+      const updateListWorker = new Worker("../workers/add-update-delete-markers-list.worker", {type: "module", name: "updateListWorker"});
+      updateListWorker.onmessage = data => {
+        this.markersList = data.data;
+      }
+      updateListWorker.postMessage([params, this.markersList, this.species]);
+    } else {
+      switch (params[1]) {
+        case "add":
+          this.addMarkerToList(params[2] as unknown as Marker);
+          break;
+        case "update":
+          this.updateMarkerFromList(params[2] as unknown as Marker);
+          break;
+        case "delete":
+          this.delteMarkerFromList(params[2]);
+          break;
+      }
+    }
+  }
+  
+  addMarkerToList(marker: Marker) {
+    for (let index = 0; index < this.species.length; index++) {
+      if(this.species[index].specie_id == marker.specie_id) {
+        marker.scientific_name = this.species[index].scientific_name;
+        marker.colloquial_name = this.species[index].colloquial_name;
+        this.markersList.push(marker);
+      }
+    }
+  }
+
+  updateMarkerFromList(marker: Marker) {
+    for (let index = 0; index < this.markersList.length; index++) {
+      if(this.markersList[index].marker_id == marker.marker_id) {
+        this.markersList[index] = marker;
+        break;
+      }
+    }
+  }
+
+  delteMarkerFromList(marker_id: string) {
+    let marker_id_cast = Number.parseInt(marker_id);
+    for (let index = 0; index < this.markersList.length; index++) {
+      if(this.markersList[index].marker_id == marker_id_cast) {
+        // Very important: array.splice method doesn't modifies the length correctly. We must delete the value firstly and then the empty indexes to trigger a change event.
+        delete this.markersList[index];
+        this.markersList = this.markersList.filter(Boolean)
+        break;
+      }
+    }
+  }
+
+  /**
+  * Creates a fake session for development and testing purposes
+  * @author Gerard Garcia
+  * @version 1.0
+  * @date 21/05/2021
+  * @memberof GogHolderComponent
+  */
+  hardcodeSession() {
+    if(localStorage.getItem("loged_user") == null) {
+      let r = {"user_id": 1, "name": "martino", "surname": "martino", "role": "martino", "key": "7f27fb93c9eaa897c8eaa985eaa79ec1ed6df77a"}
+      localStorage.setItem('loged_user', JSON.stringify(r));
+    }
   }
 }

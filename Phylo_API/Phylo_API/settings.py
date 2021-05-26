@@ -26,9 +26,9 @@ SECRET_KEY = 't(q+)@7iu_=eco&lp0!$x=3kujpx-h!9p5p(=6u9dtu4zz#knq'
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    '192.168.1.137',
     '192.168.1.33', 
-    '192.168.128.167',
-    "192.168.1.137"
+    '192.168.128.167'
 
 ]
 
@@ -36,6 +36,7 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'styles',
+    'gog_app',
     'json_species_table'
 ]
 CORS_ORIGIN_ALLOW_ALL = True
@@ -145,3 +147,5 @@ REST_FRAMEWORK = {
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+ASGI_APPLICATION = 'Phylo_API.asgi.application'

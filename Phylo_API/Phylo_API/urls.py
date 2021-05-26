@@ -22,10 +22,6 @@ from species_app import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('styles.urls')),
-    path('', include('species_app.urls')),
-    
-
-
-
+    path('', include('species_app.urls')),    
 ]
 urlpatterns = format_suffix_patterns(urlpatterns, allowed='json')
