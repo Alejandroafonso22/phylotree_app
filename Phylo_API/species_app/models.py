@@ -12,7 +12,6 @@ class species(models.Model):
     scientific_name = models.CharField(max_length=100)
     colloquial_name = models.CharField(max_length=20)
     taxon_id = models.CharField(max_length=25)
-    image_specie = models.CharField(max_length=100, null=True)
     user = models.ForeignKey(users, on_delete=models.CASCADE, null=True)
     
 class trees(models.Model):
@@ -47,4 +46,22 @@ class sequences(models.Model):
     gene = models.CharField(max_length=20)
     sequence = models.CharField(max_length=10000)
 
+class markers_with_names(models.Model):
+    marker_id = models.IntegerField(primary_key=True)
+    longitude = models.FloatField()
+    latitude = models.FloatField()
+    date = models.DateField()
+    hour = models.TimeField()
+    country = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    identification_id = models.BigIntegerField(null=True)
+    dataset_key = models.CharField(max_length=150, null=True)
+    specie_id = models.IntegerField()
+    user_id = models.IntegerField()
+    scientific_name = models.CharField(max_length=100)
+    colloquial_name = models.CharField(max_length=20)
+
+    class Meta:
+        managed = False
+        db_table = "markers_with_names"
 

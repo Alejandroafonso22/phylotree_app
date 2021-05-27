@@ -1,21 +1,26 @@
 from django.urls import path
-from .views import (login, species_api_list, species_api_details,markers_api_list, marker_api_details, tree_api_details, 
+from .views import (image_to_plot, species_api_list, species_api_details,markers_api_list, marker_api_details, tree_api_details, 
 trees_api_list,user_api_list, user_api_details, sequence_api_details, sequences_api_list, 
-occurrences_post_add, occurrences_getdetails, marker_list_specie_id, login
+occurrences_post_add, occurrences_getdetails, login_token, species_by_default, user_api_register, get_markers_with_names, articles_of_ncbi
 )
 urlpatterns=[
     path('api/species/', species_api_list),
     path('api/species/<int:pk>', species_api_details),
+    path('api/species/default', species_by_default, name="default_species"),
     path('api/markers/', markers_api_list),
     path('api/markers/<int:pk>',marker_api_details),
-    path('api/markers_id/<int:specie_id>', marker_list_specie_id),
+    path('api/markers_with_names/<int:specie_id>/<int:user_id>', get_markers_with_names),
     path('api/users/', user_api_list),
     path('api/users/<int:pk>',user_api_details),
+    path('api/register/', user_api_register),
     path('api/trees/', trees_api_list),
     path('api/trees/<int:pk>', tree_api_details),
     path('api/sequences/', sequences_api_list),
     path('api/sequences/<int:pk>',sequence_api_details),
     path('api/occurrences/', occurrences_post_add),
     path('api/occurrences/<int:specie_id>',occurrences_getdetails),
-    path('api/login', login)
+    path('api/validate_users/', login_token),
+    path('api/webscraping', articles_of_ncbi),
+    path('api/image_plot/<str:specie_name>', image_to_plot)
+
 ]
