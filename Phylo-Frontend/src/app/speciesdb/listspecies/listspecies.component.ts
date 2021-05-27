@@ -9,10 +9,11 @@ import { DatabaseService } from 'src/app/services/database/database.service';
 export class ListspeciesComponent implements OnInit {
 
   constructor(private service:DatabaseService) { }
-
   SpeciesList:any=[];
   page: number = 1;
   filterspecies = '';
+  filtertaxon = '';
+  filtercolloquial = '';
   ngOnInit(): void {
     this.refreshSpecList();
   }

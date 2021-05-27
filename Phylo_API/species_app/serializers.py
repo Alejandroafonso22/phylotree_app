@@ -4,7 +4,7 @@ from species_app.models import species, users, trees, markers, download_occurren
 class species_serializer(serializers.ModelSerializer):
     class Meta:
         model = species
-        fields = '__all__'
+        fields = ['specie_id', 'scientific_name', 'colloquial_name', 'taxon_id', 'user']
 
 class users_serializer(serializers.ModelSerializer):
     class Meta:

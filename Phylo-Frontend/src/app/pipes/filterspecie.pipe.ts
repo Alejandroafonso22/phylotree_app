@@ -15,5 +15,5 @@ export class FilterspeciePipe implements PipeTransform {
     };
     return resultSpecie;
   }
-
+  
 }

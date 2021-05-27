@@ -1,0 +1,10 @@
+.container{
+    background: -webkit-linear-gradient(left,#7b7cc7, #52b2cf );
+}
+h1{
+    text-align: center;
+    color: white;
+}
+#gldiv{
+    width: 100%; height: 80vh; margin: 0; padding: 0; border: 0;
+}
