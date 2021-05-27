@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { NgxPaginationModule } from 'ngx-pagination'; // <-- import the module
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
@@ -16,9 +17,12 @@ import { MapViewComponent } from './gof-holder/map-view/map-view.component';
 
 //PhyloGenetic-Trees imports 
 import { PhylogeneticTreesComponent } from './phylogenetic-trees/phylogenetic-trees.component';
-
-
-
+import { BackendConnectService } from './services/PhyloTrees/backend-connect.service';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AngularFileUploaderModule } from "angular-file-uploader";
+import { TaxonFilterPipe } from './Pipes/taxon-filter.pipe';
+import { MsaViewerComponent } from './phylogenetic-trees/msa-viewer/msa-viewer.component';
 
 
 @NgModule({
@@ -31,12 +35,19 @@ import { PhylogeneticTreesComponent } from './phylogenetic-trees/phylogenetic-tr
     HeaderComponent,
     NotFoundComponent,
     PhylogeneticTreesComponent,
+    TaxonFilterPipe,
+    MsaViewerComponent,
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgxPaginationModule,
+    AngularFileUploaderModule
   ],
-  providers: [],
+  providers: [BackendConnectService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

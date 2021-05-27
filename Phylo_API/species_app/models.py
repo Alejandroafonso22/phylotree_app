@@ -1,10 +1,9 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-class users(models.Model):
+class users(User):
     user_id = models.AutoField(primary_key=True)
-    email = models.CharField(max_length=50)
     name = models.CharField(max_length=20)
-    password = models.CharField(max_length=1000)
     surname = models.CharField(max_length=20)
     role = models.CharField(max_length=20)
 
@@ -13,7 +12,6 @@ class species(models.Model):
     scientific_name = models.CharField(max_length=100)
     colloquial_name = models.CharField(max_length=20)
     taxon_id = models.CharField(max_length=25)
-    image_specie = models.CharField(max_length=100, null=True)
     user = models.ForeignKey(users, on_delete=models.CASCADE, null=True)
     
 class trees(models.Model):
@@ -22,6 +20,7 @@ class trees(models.Model):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=20)
     tree_route = models.CharField(max_length=100)
+    image_route = models.CharField(max_length=100, null=True)
 
 class markers(models.Model):
     marker_id = models.AutoField(primary_key=True)
@@ -35,15 +34,12 @@ class markers(models.Model):
     state = models.CharField(max_length=100)
     identification_id = models.BigIntegerField(null=True)
     dataset_key = models.CharField(max_length=150, null=True)
-
-class map_images(models.Model):
-    tree = models.ForeignKey(trees, on_delete=models.CASCADE)
-    image_route = models.CharField(max_length=100)
-
+    
 class download_occurrences_date(models.Model):
     specie = models.ForeignKey(species, on_delete=models.CASCADE)
     download_id = models.CharField(max_length=23, unique=True)
     download_date = models.DateField(auto_now_add=True)
+
 
 class sequences(models.Model):
     acc_number = models.CharField(max_length=20,primary_key=True)
@@ -52,6 +48,71 @@ class sequences(models.Model):
     sequence = models.CharField(max_length=10000)
 
 
-class used_species(models.Model):
-    tree = models.ForeignKey(trees, on_delete=models.CASCADE)
-    specie = models.ForeignKey(species, on_delete=models.CASCADE)
+class ortholog(models.Model):
+    entry_nr = models.IntegerField()
+    sequence_length = models.IntegerField()
+    taxon_id = models.IntegerField()
+    species = models.CharField(max_length=250)
+    chromosome = models.CharField(max_length=50)
+    distance = models.FloatField(max_length=250)
+    score = models.FloatField(max_length=50)
+    class Meta:
+        managed = False
+        db_table = "ortholog"
+
+
+class users_with_token(models.Model):
+    user_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=20)
+    surname = models.CharField(max_length=20)
+    role = models.CharField(max_length=20)
+    key = models.CharField(max_length=50)
+    class Meta:
+        managed = False
+        db_table = "users_with_token"
+
+class markers_with_names(models.Model):
+    marker_id = models.IntegerField(primary_key=True)
+    longitude = models.FloatField()
+    latitude = models.FloatField()
+    date = models.DateField()
+    hour = models.TimeField()
+    country = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    identification_id = models.BigIntegerField(null=True)
+    dataset_key = models.CharField(max_length=150, null=True)
+    specie_id = models.IntegerField()
+    user_id = models.IntegerField()
+    scientific_name = models.CharField(max_length=100)
+    colloquial_name = models.CharField(max_length=20)
+
+
+    class Meta:
+        managed = False
+        db_table = "markers_with_names"
+
+class blast(models.Model):
+    acc_number = models.CharField(max_length=20,primary_key=True)
+    scientific_name = models.CharField(max_length=100)
+    gene = models.CharField(max_length=20, null = True)
+    specie_authors = models.CharField(max_length=7000, default=False)
+    user = models.ForeignKey(users, on_delete=models.CASCADE, null=True)
+
+
+class blast_species_gen(models.Model):
+    acc_number = models.CharField(max_length=20,primary_key=True)
+    scientific_name = models.CharField(max_length=100)
+    gene = models.CharField(max_length=20, null = True)
+    user = models.ForeignKey(users, on_delete=models.CASCADE, null=True)
+    class Meta:
+        managed = False
+        db_table = "get_blast_species_gen"
+
+class blast_authors(models.Model):
+    acc_number = models.CharField(max_length=20,primary_key=True)
+    scientific_name = models.CharField(max_length=100)
+    gene = models.CharField(max_length=20, null = True)
+    specie_authors = models.CharField(max_length=10000, default=False)
+    class Meta:
+        managed = False
+        db_table = "get_blast_authors"

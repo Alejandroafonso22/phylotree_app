@@ -26,7 +26,6 @@ SECRET_KEY = 't(q+)@7iu_=eco&lp0!$x=3kujpx-h!9p5p(=6u9dtu4zz#knq'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-
 ]
 
 
@@ -42,6 +41,7 @@ INSTALLED_APPS = [
     'corsheaders', 
     'species_app',
     'rest_framework',
+    'rest_framework.authtoken',
     'styles'
 ]
 CORS_ORIGIN_ALLOW_ALL = True
@@ -129,6 +129,12 @@ USE_L10N = True
 
 USE_TZ = True
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        
+    ]
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
